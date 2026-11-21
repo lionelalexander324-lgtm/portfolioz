@@ -7,6 +7,7 @@ import { SplashVisuals } from './components/SplashVisuals'
 import { WebExperiences } from './components/WebExperiences'
 import { MotionGallery } from './components/MotionGallery'
 import { ContactFooter } from './components/ContactFooter'
+import ScrollStack, { ScrollStackItem } from './components/ScrollStack'
 
 export default function App() {
   return <main>
@@ -14,10 +15,12 @@ export default function App() {
     <WorkMarquee />
     <About />
     <WorkIndex />
-    <Campaigns />
-    <SplashVisuals />
-    <WebExperiences />
-    <MotionGallery />
+    <ScrollStack className="section-stack" useWindowScroll smoothScroll={false} itemDistance={80} itemStackDistance={18} stackPosition="2%" itemScale={.018} baseScale={.93} dimAmount={.08} holdDistance={120}>
+      <ScrollStackItem itemClassName="portfolio-section-card section-card-campaign"><Campaigns /></ScrollStackItem>
+      <ScrollStackItem itemClassName="portfolio-section-card section-card-splash"><SplashVisuals /></ScrollStackItem>
+      <ScrollStackItem itemClassName="portfolio-section-card section-card-web"><WebExperiences /></ScrollStackItem>
+      <ScrollStackItem itemClassName="portfolio-section-card section-card-motion"><MotionGallery /></ScrollStackItem>
+    </ScrollStack>
     <ContactFooter />
   </main>
 }

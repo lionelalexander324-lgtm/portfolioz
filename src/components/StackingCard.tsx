@@ -1,12 +1,17 @@
 import { ExternalLink, MousePointer2 } from 'lucide-react'
-import { useState } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { useRef, useState } from 'react'
 import type { PortfolioItem } from '../data/portfolio'
 
-export function StackingCard({ item, index }: { item: PortfolioItem, index: number }) {
+export function StackingCard({ item, index, total }: { item: PortfolioItem, index: number, total: number }) {
+  const ref = useRef<HTMLElement>(null)
   const [loaded, setLoaded] = useState(false)
   const [interactive, setInteractive] = useState(false)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1 - (total - index) * .025])
   const host = item.url ? new URL(item.url).hostname.replace('www.', '') : ''
-  return <div className={`stack-card stack-${index}`}>
+  return <article ref={ref} className="stack-wrap">
+    <motion.div className={`stack-card stack-${index}`} style={{ scale, top: `${92 + index * 18}px` }}>
       <div className="stack-copy"><span>0{index + 1} / WEB EXPERIENCE</span><h3>{item.title}</h3><p>{item.description}</p>{item.url && <a href={item.url} target="_blank" rel="noopener noreferrer"><ExternalLink size={18} />打开网页</a>}</div>
       <div className="stack-shot">
         <div className="live-preview">
@@ -22,5 +27,6 @@ export function StackingCard({ item, index }: { item: PortfolioItem, index: numb
           </div>
         </div>
       </div>
-  </div>
+    </motion.div>
+  </article>
 }
