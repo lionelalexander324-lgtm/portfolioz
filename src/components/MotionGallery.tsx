@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Pause, Play, X } from 'lucide-react'
 import { motionWorks } from '../data/portfolio'
+import ScrollStack, { ScrollStackItem } from './ScrollStack'
 
 export function MotionGallery() {
   const refs = useRef<(HTMLVideoElement | null)[]>([])
@@ -32,13 +33,17 @@ export function MotionGallery() {
 
   return <section id="motion" className="motion-gallery section-dark work-section cover-panel cover-panel-4">
     <header className="work-heading dark-heading"><div><span>04 / MOTION CREATIONS</span><h2>动态创作</h2></div><p>座位框、座驾与活动动态效果。</p></header>
-    <div className="motion-grid">{motionWorks.map((item, index) => <article className={`motion-card motion-${index}`} key={item.id}>
-      <div className={`motion-media${item.video ? '' : ' is-poster-only'}`} onDoubleClick={() => item.video && setSelected(index)}>
-        {item.video ? <video ref={node => { refs.current[index] = node }} src={item.video} poster={item.poster} muted loop playsInline preload="metadata" aria-label={item.alt} onClick={() => toggle(index)} onPlay={() => setPlaying(index)} onPause={() => setPlaying(current => current === index ? null : current)} /> : <img className="motion-poster" src={item.poster} alt={item.alt} loading="lazy" />}
-        {item.video && <button type="button" className="play-button" aria-label={playing === index ? `暂停 ${item.title}` : `播放 ${item.title}`} onClick={() => toggle(index)}>{playing === index ? <Pause /> : <Play />}</button>}
-        {item.video ? <button type="button" className="view-video" onClick={() => setSelected(index)}>放大播放</button> : <span className="poster-note">静态预览</span>}
-      </div><div className="motion-meta"><small>{String(index + 1).padStart(2, '0')}</small><div><h3>{item.title}</h3><p>{item.description}</p></div></div>
-    </article>)}</div>
+    <ScrollStack className="motion-stack" useWindowScroll smoothScroll={false} itemDistance={100} itemStackDistance={20} stackPosition="9%" itemScale={.03} baseScale={.86} dimAmount={.12} holdDistance={180}>
+      {motionWorks.map((item, index) => <ScrollStackItem itemClassName="motion-scroll-card" key={item.id}>
+        <article className={`motion-card motion-${index}`}>
+          <div className={`motion-media${item.video ? '' : ' is-poster-only'}`} onDoubleClick={() => item.video && setSelected(index)}>
+            {item.video ? <video ref={node => { refs.current[index] = node }} src={item.video} poster={item.poster} muted loop playsInline preload="metadata" aria-label={item.alt} onClick={() => toggle(index)} onPlay={() => setPlaying(index)} onPause={() => setPlaying(current => current === index ? null : current)} /> : <img className="motion-poster" src={item.poster} alt={item.alt} loading="lazy" />}
+            {item.video && <button type="button" className="play-button" aria-label={playing === index ? `暂停 ${item.title}` : `播放 ${item.title}`} onClick={() => toggle(index)}>{playing === index ? <Pause /> : <Play />}</button>}
+            {item.video ? <button type="button" className="view-video" onClick={() => setSelected(index)}>放大播放</button> : <span className="poster-note">静态预览</span>}
+          </div><div className="motion-meta"><small>{String(index + 1).padStart(2, '0')}</small><div><h3>{item.title}</h3><p>{item.description}</p></div></div>
+        </article>
+      </ScrollStackItem>)}
+    </ScrollStack>
     {selected !== null && <div className="lightbox video-lightbox" role="dialog" aria-modal="true" aria-label={`${motionWorks[selected].title} 视频预览`} onClick={() => setSelected(null)}>
       <button type="button" className="lightbox-close" onClick={() => setSelected(null)} aria-label="关闭视频"><X /></button>
       <figure onClick={e => e.stopPropagation()}><video src={motionWorks[selected].video} poster={motionWorks[selected].poster} controls autoPlay muted loop playsInline /><figcaption>{motionWorks[selected].title}</figcaption></figure>
